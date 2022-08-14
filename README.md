@@ -1,2 +1,7 @@
-# jvmgo
-A project for java virtual machine(JVM) implemented in Golang
+# `jvmgo`
+> A project for Java virtual machine(`JVM`) implemented in `Golang`
+
+
+
+English | [中文](./README_CN.md)
+
