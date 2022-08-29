@@ -18,23 +18,38 @@ package classpath
 
 import (
 	"os"
-	"strings"
 )
 
-func IsJar(path string) bool {
-	return strings.HasSuffix(path, SuffixJar) || strings.HasSuffix(path, SuffixJAR)
-}
+const (
+	EmptyString = ""
+	Dot         = "."
+)
 
-func IsZip(path string) bool {
-	return strings.HasSuffix(path, SuffixZip) || strings.HasSuffix(path, SuffixZIP)
-}
+const (
+	// PathListSeparator :(linux/unix) or ;(windows)
+	PathListSeparator = string(os.PathListSeparator)
+	Star              = "*"
+)
 
-func IsExists(path string) bool {
-	if _, err := os.Stat(path); err != nil {
-		if os.IsNotExist(err) {
-			return false
-		}
-	}
+const (
+	Jar       = "jar"
+	JAR       = "JAR"
+	Zip       = "zip"
+	ZIP       = "ZIP"
+	SuffixJar = ".jar"
+	SuffixJAR = ".JAR"
+	SuffixZip = ".zip"
+	SuffixZIP = ".ZIP"
+)
 
-	return true
-}
+const (
+	JavaHome  = "JAVA_HOME"
+	JRE       = "jre"
+	JRELib    = "lib"
+	JRELibExt = "ext"
+	JREDir    = "./jre"
+)
+
+const (
+	SuffixClass = ".class"
+)

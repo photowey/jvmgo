@@ -18,8 +18,21 @@ package jvm
 
 import (
 	"fmt"
+	"strings"
+
+	"github.com/photowey/jvmgo/internal/classpath"
 )
 
 func Start(cmd *Cmd) {
-	fmt.Printf("classpath: %s \nclass: %s \nargs: %v\n", cmd.classpath, cmd.class, cmd.args)
+	cp := classpath.Parse(cmd.xjreOpt, cmd.cpOpt)
+	fmt.Printf("jvm: classpath: %s class: %s args: %v\n", cp, cmd.class, cmd.args)
+
+	className := strings.Replace(cmd.class, ".", "/", -1)
+	classData, _, err := cp.ReadClass(className)
+	if err != nil {
+		fmt.Printf("jvm: Could not find or load main class %s\n", cmd.class)
+		return
+	}
+
+	fmt.Printf("jvm: class data:%v\n", classData)
 }

@@ -18,18 +18,84 @@ package classpath
 
 import (
 	"os"
+	"path/filepath"
+	"strings"
 )
 
-const (
-	// PathListSeparator :(linux/unix) or ;(windows)
-	PathListSeparator = string(os.PathListSeparator)
-	Star              = "*"
-	Jar               = "jar"
-	JAR               = "JAR"
-	Zip               = "zip"
-	ZIP               = "ZIP"
-	SuffixJar         = ".jar"
-	SuffixJAR         = ".JAR"
-	SuffixZip         = ".zip"
-	SuffixZIP         = ".ZIP"
-)
+type Classpath struct {
+	bootClasspath Entry
+	extClasspath  Entry
+	userClasspath Entry
+}
+
+func Parse(jreOpt, cpOpt string) *Classpath {
+	cp := &Classpath{}
+	cp.parseBootClasspath(jreOpt)
+	cp.parseExtClasspath(jreOpt)
+	cp.parseUserClasspath(cpOpt)
+
+	return cp
+}
+
+func (cp *Classpath) parseBootClasspath(jreOpt string) {
+	jreDir := determineJreDir(jreOpt)
+
+	// jre/lib/*
+	jreLibPath := filepath.Join(jreDir, JRELib, Star)
+
+	cp.bootClasspath = newWildcardEntry(jreLibPath)
+}
+
+func (cp *Classpath) parseExtClasspath(jreOpt string) {
+	jreDir := determineJreDir(jreOpt)
+	jreLibExtPath := filepath.Join(jreDir, JRELib, JRELibExt, Star)
+
+	// jre/lib/ext/*
+	cp.extClasspath = newWildcardEntry(jreLibExtPath)
+}
+
+func (cp *Classpath) parseUserClasspath(cpOpt string) {
+	if cpOpt == EmptyString {
+		cpOpt = Dot
+	}
+
+	cp.userClasspath = newEntry(cpOpt)
+}
+
+func (cp *Classpath) ReadClass(className string) ([]byte, Entry, error) {
+	if !strings.HasSuffix(className, SuffixClass) {
+		className = className + SuffixClass
+	}
+
+	// boot
+	if data, entry, err := cp.bootClasspath.readClass(className); err == nil {
+		return data, entry, err
+	}
+	// ext
+	if data, entry, err := cp.extClasspath.readClass(className); err == nil {
+		return data, entry, err
+	}
+
+	// app
+	return cp.userClasspath.readClass(className)
+}
+
+func (cp *Classpath) String() string {
+	return cp.userClasspath.String()
+}
+
+func determineJreDir(jreOpt string) string {
+	if jreOpt != EmptyString && IsExists(jreOpt) {
+		return jreOpt
+	}
+
+	if IsExists(JREDir) {
+		return JREDir
+	}
+
+	if javaHome := os.Getenv(JavaHome); javaHome != EmptyString {
+		return filepath.Join(javaHome, JRE)
+	}
+
+	panic("classpath: Can't find jre folder!")
+}

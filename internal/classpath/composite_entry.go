@@ -49,7 +49,7 @@ func (entry CompositeEntry) readClass(className string) ([]byte, Entry, error) {
 		}
 	}
 
-	return nil, nil, fmt.Errorf("classpath: class not found: %s", className)
+	return nil, nil, fmt.Errorf("classpath: Class not found: %s", className)
 }
 
 func (entry CompositeEntry) String() string {

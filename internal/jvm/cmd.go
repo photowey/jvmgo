@@ -25,6 +25,7 @@ import (
 	"strings"
 )
 
+// Cmd java [-options] class [args...]
 type Cmd struct {
 	helpFlag    bool
 	versionFlag bool

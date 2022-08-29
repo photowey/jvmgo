@@ -49,7 +49,7 @@ func (entry *ZipEntry) readClass(className string) ([]byte, Entry, error) {
 
 	zf := entry.findClass(className)
 	if zf == nil {
-		return nil, nil, fmt.Errorf("classpath: class not found: %s", className)
+		return nil, nil, fmt.Errorf("classpath: Class not found: %s", className)
 	}
 
 	data, err := loadClass(zf)
