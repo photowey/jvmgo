@@ -26,32 +26,35 @@ import (
 )
 
 type Cmd struct {
-	help      bool
-	version   bool
-	classpath string
-	class     string
-	args      []string
+	helpFlag    bool
+	versionFlag bool
+	cpOpt       string
+	xjreOpt     string
+	class       string
+	args        []string
 }
 
 func (cmd *Cmd) Version() bool {
-	return cmd.version
+	return cmd.versionFlag
 }
 
 func (cmd *Cmd) Help() bool {
-	return cmd.help || cmd.class == ""
+	return cmd.helpFlag || cmd.class == ""
 }
 
 func ParseArgs() *Cmd {
 	cmd := &Cmd{}
 
 	flag.Usage = Usage
-	flag.BoolVar(&cmd.help, "help", false, "print help message")
-	flag.BoolVar(&cmd.help, "?", false, "print help message")
+	flag.BoolVar(&cmd.helpFlag, "help", false, "print helpFlag message")
+	flag.BoolVar(&cmd.helpFlag, "?", false, "print helpFlag message")
 
-	flag.BoolVar(&cmd.version, "version", false, "print version and exit")
+	flag.BoolVar(&cmd.versionFlag, "version", false, "print versionFlag and exit")
 
-	flag.StringVar(&cmd.classpath, "classpath", "", "classpath")
-	flag.StringVar(&cmd.classpath, "cp", "", "classpath")
+	flag.StringVar(&cmd.cpOpt, "classpath", "", "classpath")
+	flag.StringVar(&cmd.cpOpt, "cp", "", "classpath")
+
+	flag.StringVar(&cmd.xjreOpt, "Xjre", "", "path to jre")
 
 	flag.Parse()
 
